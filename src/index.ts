@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import cluster from "cluster";
 import debug from "debug";
 import express from "express";
