@@ -12,3 +12,4 @@ script:
 deploy:
   provider: npm
   email: "shawn@shawnh.net"
+  api_key: $NPM_TOKEN
