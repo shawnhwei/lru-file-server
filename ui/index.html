@@ -1,0 +1,123 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>File upload</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#512c62">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <style type="text/css">
+    * {
+      font-family: 'Open Sans', sans-serif;
+      color: #FFF;
+    }
+
+    #upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #512c62;
+      font-size: 36px;
+    }
+
+    #upload.over {
+      background-color: #f75f00;
+    }
+
+    #upload.done {
+      background-color: #43ab92;
+    }
+
+    #upload strong {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    #file {
+      border: 0;
+      clip: rect(0, 0, 0, 0);
+      height: 1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute !important;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    #url {
+      flex: 1;
+      display: none;
+      background-color: transparent;
+      text-align: center;
+      font-size: 36px;
+      border: none;
+      outline: none;
+      color: #FFF;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="upload" ondragover="dragoverHandler(event)" ondragleave="dragleaveHandler(event)"
+    ondrop="dropHandler(event)">
+    <input id="file" name="file" type="file" onchange="changeHandler(event)">
+    <label id="file_label" for="file"><strong>Choose</strong> or drop a file here</label>
+    <input id="url" type="url">
+  </div>
+
+  <script type="text/javascript">
+    function dragoverHandler(event) {
+      event.preventDefault();
+      document.getElementById("upload").className = "over";
+    }
+
+    function dragleaveHandler(event) {
+      event.preventDefault();
+      document.getElementById("upload").className = "";
+    }
+
+    function dropHandler(event) {
+      event.preventDefault();
+
+      document.getElementById("upload").className = "";
+
+      if (event.dataTransfer.files.length === 1) {
+        const file = event.dataTransfer.files[0];
+        upload(file);
+      }
+    }
+
+    function changeHandler(event) {
+      const file = document.getElementById("file").files[0];
+      upload(file);
+    }
+
+    function upload(file) {
+      document.getElementById("upload").ondrop = null;
+      document.getElementById("upload").ondragover = null;
+      document.getElementById("file").style.display = "none";
+      document.getElementById("file_label").style.display = "none";
+
+      var formData = new FormData();
+      formData.append("file", file);
+      var xhr = new XMLHttpRequest();
+      xhr.open("PUT", window.location.origin + "/files", true);
+      xhr.onload = function () {
+        const data = JSON.parse(xhr.responseText);
+        document.getElementById("upload").className = "done";
+        document.getElementById("url").style.display = "inline-block";
+        document.getElementById("url").value = window.location.origin + "/files/" + data.filename;
+      }
+      xhr.send(formData);
+    }
+  </script>
+</body>
+
+</html>
