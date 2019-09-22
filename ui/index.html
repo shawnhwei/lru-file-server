@@ -28,6 +28,10 @@
     }
 
     #upload.over {
+      background-color: #c93838;
+    }
+
+    #upload.loading {
       background-color: #f75f00;
     }
 
@@ -86,8 +90,6 @@
     function dropHandler(event) {
       event.preventDefault();
 
-      document.getElementById("upload").className = "";
-
       if (event.dataTransfer.files.length === 1) {
         const file = event.dataTransfer.files[0];
         upload(file);
@@ -100,6 +102,7 @@
     }
 
     function upload(file) {
+      document.getElementById("upload").className = "loading";
       document.getElementById("upload").ondrop = null;
       document.getElementById("upload").ondragover = null;
       document.getElementById("file").style.display = "none";
