@@ -13,6 +13,7 @@
   },
   "keywords": [],
   "author": "Shawn Hwei <shawn@shawnh.net>",
+  "repository": "github:shawnhwei/lru-static-server",
   "license": "MIT",
   "devDependencies": {
     "@types/debug": "^4.1.5",

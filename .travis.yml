@@ -5,3 +5,10 @@ node_js:
 
 install:
   - npm ci
+
+script:
+  - npm run compile
+
+deploy:
+  provider: npm
+  email: "shawn@shawnh.net"
