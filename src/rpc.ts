@@ -24,7 +24,8 @@ const Deferred = function (this: Deferred): Deferred {
 export enum LRURPC {
   Add,
   Touch,
-  Info
+  Info,
+  Stats
 }
 
 export class RPCServer {
@@ -62,6 +63,14 @@ export class RPCServer {
         action: LRURPC.Info,
         id: data.id,
         info
+      });
+    } else if (data.action === LRURPC.Stats) {
+      const stats = this.lru.stats();
+
+      worker.send({
+        handle: data.handle,
+        action: LRURPC.Stats,
+        stats
       });
     }
   }
@@ -121,6 +130,20 @@ export class RPCClient {
     return promise as unknown as Promise<any>;
   }
 
+  public lru_stats(): Promise<any> {
+    const handle = this.counter++;
+    const promise = new Deferred();
+
+    this.promises.set(handle, promise);
+
+    process.send!({
+      handle,
+      action: LRURPC.Stats
+    });
+
+    return promise as unknown as Promise<any>;
+  }
+
   private handleMessage(data: any) {
     if (this.promises.has(data.handle)) {
       if (data.action === LRURPC.Add) {
@@ -129,6 +152,8 @@ export class RPCClient {
         this.promises.get(data.handle)!.resolve(data.found);
       } else if (data.action === LRURPC.Info) {
         this.promises.get(data.handle)!.resolve(data.info);
+      } else if (data.action === LRURPC.Stats) {
+        this.promises.get(data.handle)!.resolve(data.stats);
       }
     }
   }

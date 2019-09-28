@@ -2,126 +2,92 @@
 <html class="no-js" lang="">
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>File upload</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#512c62">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-  <style type="text/css">
-    * {
-      font-family: 'Open Sans', sans-serif;
-      color: #FFF;
-    }
-
-    #upload {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #512c62;
-      font-size: 36px;
-    }
-
-    #upload.over {
-      background-color: #c93838;
-    }
-
-    #upload.loading {
-      background-color: #f75f00;
-    }
-
-    #upload.done {
-      background-color: #43ab92;
-    }
-
-    #upload strong {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    #file {
-      border: 0;
-      clip: rect(0, 0, 0, 0);
-      height: 1px;
-      overflow: hidden;
-      padding: 0;
-      position: absolute !important;
-      white-space: nowrap;
-      width: 1px;
-    }
-
-    #url {
-      flex: 1;
-      display: none;
-      background-color: transparent;
-      text-align: center;
-      font-size: 36px;
-      border: none;
-      outline: none;
-      color: #FFF;
-    }
-  </style>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#512c62" />
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div id="upload" ondragover="dragoverHandler(event)" ondragleave="dragleaveHandler(event)"
-    ondrop="dropHandler(event)">
-    <input id="file" name="file" type="file" onchange="changeHandler(event)">
-    <label id="file_label" for="file"><strong>Choose</strong> or drop a file here</label>
-    <input id="url" type="url">
+  <div class="mw7 center mt5-l">
+    <div id="box" class="bg-dark-blue">
+      <div id="upload" class="relative pv6 ph4 f3 white pointer">
+        <input id="file" name="file" type="file">
+        <label for="file" class="code" style="pointer-events: none; user-select: none">Drop a file or
+          click to choose</label>
+        <div class="absolute top-0 left-0 w3 h3 bt bl bw3 b--blue"></div>
+        <div class="absolute top-0 right-0 w3 h3 bt br bw3 b--blue"></div>
+        <div class="absolute bottom-0 left-0 w3 h3 bb bl bw3 b--blue"></div>
+        <div class="absolute bottom-0 right-0 w3 h3 bb br bw3 b--blue"></div>
+      </div>
+      <div id="progress" class="dn relative pv6 ph4 f3 white">
+        <div id="progress-text" class="relative z-1 code">0.00%</div>
+        <div id="progress-bar" class="absolute top-0 bottom-0 left-0 z-0 bg-blue"
+          style="transition: width 1s linear; width: 0%"></div>
+      </div>
+      <div id="share" class="dn relative pv6 ph4 f3 white">
+        <div id="share-text" type="text" class="w-100 bw0 outline-0 bg-transparent truncate white code"
+          style="word-break: break-all"></div>
+      </div>
+    </div>
+    <div class="mt5 mb5 sans-serif">
+      <h3 class="f6 ttu tracked mt4 mb3">Storage</h3>
+      <div class="relative mb3 pb4 b--black-10">
+        <div class="flex pb1">
+          <div class="w-50 tl f6 code">Used</div>
+          <div id="storage-total" class="w-50 tr f6 code"></div>
+        </div>
+        <div class="flex br-pill bg-light-gray">
+          <div id="storage-bar" class="h1 br-pill br--left br bw1 b--black bg-blue f6 tc white code truncate" style="width: 0%"></div>
+        </div>
+        <div>
+          <div id="storage-text" class="absolute pr1 pt1 bg-white f6 tr br bw1 b--black code">0.00%</div>
+        </div>
+      </div>
+      <!-- <h3 class="f6 ttu tracked mt4 mb3">Today</h3>
+      <div class="flex pb4 bb b--black-10">
+        <div class="w-25">
+          <div class="f6 fw4">Average TTL</div>
+          <div class="f3 fw6">1.7 days</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Uploads</div>
+          <div class="f3 fw6">993 files</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Evictions</div>
+          <div class="f3 fw6">34 files</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Bandwidth</div>
+          <div class="f3 fw6">4.5 GB</div>
+        </div>
+      </div>
+      <h3 class="f6 ttu tracked mt4 mb3">This Week</h3>
+      <div class="flex">
+        <div class="w-25">
+          <div class="f6 fw4">Average TTL</div>
+          <div class="f3 fw6">1.7 days</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Uploads</div>
+          <div class="f3 fw6">993 files</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Evictions</div>
+          <div class="f3 fw6">34 files</div>
+        </div>
+        <div class="w-25">
+          <div class="f6 fw4">Bandwidth</div>
+          <div class="f3 fw6">4.5 GB</div>
+        </div>
+      </div> -->
+    </div>
   </div>
-
-  <script type="text/javascript">
-    function dragoverHandler(event) {
-      event.preventDefault();
-      document.getElementById("upload").className = "over";
-    }
-
-    function dragleaveHandler(event) {
-      event.preventDefault();
-      document.getElementById("upload").className = "";
-    }
-
-    function dropHandler(event) {
-      event.preventDefault();
-
-      if (event.dataTransfer.files.length === 1) {
-        const file = event.dataTransfer.files[0];
-        upload(file);
-      }
-    }
-
-    function changeHandler(event) {
-      const file = document.getElementById("file").files[0];
-      upload(file);
-    }
-
-    function upload(file) {
-      document.getElementById("upload").className = "loading";
-      document.getElementById("upload").ondrop = null;
-      document.getElementById("upload").ondragover = null;
-      document.getElementById("upload").ondragleave = null;
-      document.getElementById("file").style.display = "none";
-      document.getElementById("file_label").style.display = "none";
-
-      var formData = new FormData();
-      formData.append("file", file);
-      var xhr = new XMLHttpRequest();
-      xhr.open("PUT", window.location.origin + "/files", true);
-      xhr.onload = function () {
-        const data = JSON.parse(xhr.responseText);
-        document.getElementById("upload").className = "done";
-        document.getElementById("url").style.display = "inline-block";
-        document.getElementById("url").value = window.location.origin + "/files/" + data.filename;
-      }
-      xhr.send(formData);
-    }
-  </script>
+  <script type="text/javascript" src="main.js"></script>
 </body>
 
 </html>

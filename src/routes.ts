@@ -13,6 +13,12 @@ export function routes(config: Config) {
   const upload = multer({ storage, limits: config.limits });
   const RPC = new RPCClient();
 
+  router.use("/stats", async (req: any, res, next) => {
+    const stats = await RPC.lru_stats();
+
+    res.json(stats);
+  });
+
   router.use("/files", upload.single("file"), async (req: any, res, next) => {
     if (!["PUT", "POST"].includes(req.method)) next();
 

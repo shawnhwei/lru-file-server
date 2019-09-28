@@ -68,4 +68,13 @@ export default class LRU {
       return false;
     }
   }
+
+  public stats() {
+    return {
+      storage: {
+        total: this.config.maxStorage,
+        used: this.totalSize
+      }
+    };
+  }
 }
