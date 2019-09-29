@@ -74,6 +74,7 @@ export function routes(config: Config) {
     immutable: true,
     index: ["index.html"],
     lastModified: true,
+    maxAge: 3600000,
     redirect: true
   }));
 
