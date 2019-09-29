@@ -71,7 +71,7 @@ export function routes(config: Config) {
     dotfiles: "ignore",
     etag: true,
     fallthrough: false,
-    immutable: true,
+    immutable: false,
     index: ["index.html"],
     lastModified: true,
     maxAge: 3600000,

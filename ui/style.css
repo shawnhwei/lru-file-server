@@ -1,5 +1,18 @@
-.transition {
-  transition: all 1s;
+.no-select {
+  pointer-events: none;
+  user-select: none;
+}
+
+.break {
+  word-break: break-all;
+}
+
+.trans-width {
+  transition: width 1s linear;
+}
+
+.hidden {
+  display: none !important;
 }
 
 input[type=file] {
@@ -11,4 +24,8 @@ input[type=file] {
   position: absolute !important;
   white-space: nowrap;
   width: 1px;
+}
+
+#box {
+  height: 300px;
 }

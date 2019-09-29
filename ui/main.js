@@ -42,15 +42,14 @@ function changeHandler(event) {
 }
 
 function upload(file) {
-  document.getElementById("upload").classList.add("dn");
-  document.getElementById("progress").classList.remove("dn");
+  document.getElementById("upload").classList.add("hidden");
+  document.getElementById("progress").classList.remove("hidden");
 
   var formData = new FormData();
   formData.append("file", file);
   var xhr = new XMLHttpRequest();
   xhr.open("PUT", window.location.origin + "/files", true);
   xhr.upload.onprogress = function (event) {
-    console.log(event);
     const percent = (100 * (event.loaded / event.total)).toFixed(2);
     document.getElementById("progress-text").innerText = percent + "%";
     document.getElementById("progress-bar").style.width = percent + "%";
@@ -59,18 +58,16 @@ function upload(file) {
     if (xhr.status >= 300) {
       document.getElementById("box").classList.remove("bg-dark-blue");
       document.getElementById("box").classList.add("bg-dark-red");
-      document.getElementById("progress-bar").classList.add("dn");
+      document.getElementById("progress-bar").classList.add("hidden");
       document.getElementById("progress-text").innerText = "Error";
       return;
     }
 
     const data = JSON.parse(xhr.responseText);
-    console.log(data);
-    document.getElementById("box").classList.add("transition");
     document.getElementById("box").classList.remove("bg-dark-blue");
     document.getElementById("box").classList.add("bg-green");
-    document.getElementById("progress").classList.add("dn");
-    document.getElementById("share").classList.remove("dn");
+    document.getElementById("progress").classList.add("hidden");
+    document.getElementById("share").classList.remove("hidden");
     document.getElementById("share-text").innerText = window.location.origin + "/files/" + data.filename;
   }
   xhr.send(formData);

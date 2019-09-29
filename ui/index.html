@@ -13,24 +13,22 @@
 
 <body>
   <div class="mw7 center mt5-l">
-    <div id="box" class="bg-dark-blue">
-      <div id="upload" class="relative pv6 ph4 f3 white pointer">
+    <div id="box" class="flex bg-dark-blue">
+      <div id="upload" class="w-100 h-100 flex items-center relative pv6 ph4 f3 white pointer">
         <input id="file" name="file" type="file">
-        <label for="file" class="code" style="pointer-events: none; user-select: none">Drop a file or
+        <label for="file" class="code no-select">Drop a file or
           click to choose</label>
         <div class="absolute top-0 left-0 w3 h3 bt bl bw3 b--blue"></div>
         <div class="absolute top-0 right-0 w3 h3 bt br bw3 b--blue"></div>
         <div class="absolute bottom-0 left-0 w3 h3 bb bl bw3 b--blue"></div>
         <div class="absolute bottom-0 right-0 w3 h3 bb br bw3 b--blue"></div>
       </div>
-      <div id="progress" class="dn relative pv6 ph4 f3 white">
+      <div id="progress" class="hidden w-100 h-100 flex items-center relative pv5 ph4 f1 white">
         <div id="progress-text" class="relative z-1 code">0.00%</div>
-        <div id="progress-bar" class="absolute top-0 bottom-0 left-0 z-0 bg-blue"
-          style="transition: width 1s linear; width: 0%"></div>
+        <div id="progress-bar" class="absolute top-0 bottom-0 left-0 z-0 bg-blue trans-width" style="width: 0%"></div>
       </div>
-      <div id="share" class="dn relative pv6 ph4 f3 white">
-        <div id="share-text" type="text" class="w-100 bw0 outline-0 bg-transparent white code"
-          style="word-break: break-all"></div>
+      <div id="share" class="hidden w-100 h-100 flex items-center relative pv6 ph4 f3 white">
+        <div id="share-text" type="text" class="w-100 bw0 outline-0 bg-transparent white code break"></div>
       </div>
     </div>
     <div class="mv5-l ph3 ph0-l sans-serif">
