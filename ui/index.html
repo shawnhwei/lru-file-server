@@ -29,7 +29,7 @@
           style="transition: width 1s linear; width: 0%"></div>
       </div>
       <div id="share" class="dn relative pv6 ph4 f3 white">
-        <div id="share-text" type="text" class="w-100 bw0 outline-0 bg-transparent truncate white code"
+        <div id="share-text" type="text" class="w-100 bw0 outline-0 bg-transparent white code"
           style="word-break: break-all"></div>
       </div>
     </div>
@@ -40,11 +40,14 @@
           <div class="w-50 tl f6 code">Used</div>
           <div id="storage-total" class="w-50 tr f6 code"></div>
         </div>
-        <div class="flex br-pill bg-light-gray">
-          <div id="storage-bar" class="h1 br-pill br--left br bw1 b--black bg-blue f6 tc white code truncate" style="width: 0%"></div>
+        <div class="relative flex br-pill bg-light-gray">
+          <div class="w-100 br-pill overflow-hidden">
+            <div id="storage-bar" class="h1 br-pill bg-blue br--left f6 tc white code truncate" style="width: 0%"></div>
+          </div>
+          <div id="storage-marker" class="absolute top-0 h1 br bw1 b--black" style="width: 0%"></div>
         </div>
         <div>
-          <div id="storage-text" class="absolute pr1 pt1 bg-white f6 tr br bw1 b--black code">0.00%</div>
+          <div id="storage-text" class="pt1 bg-white f6 tr code" style="width: 0%">0.00%</div>
         </div>
       </div>
       <!-- <h3 class="f6 ttu tracked mt4 mb3">Today</h3>

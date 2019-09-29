@@ -92,7 +92,8 @@ xhr.onload = function () {
   const percent = (100 * (data.storage.used / data.storage.total)).toFixed(2);
   document.getElementById("storage-total").innerText = Math.round(data.storage.total / 1000000000) + "GB";
   document.getElementById("storage-bar").style.width = percent + "%";
-  document.getElementById("storage-text").style.right = (100 - percent) + "%";
+  document.getElementById("storage-marker").style.width = percent + "%";
+  document.getElementById("storage-text").style.width = percent + "%";
   document.getElementById("storage-text").innerText = percent + "%";
 }
 xhr.send();
