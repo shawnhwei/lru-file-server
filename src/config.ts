@@ -1,8 +1,8 @@
 import fs from "fs";
-import * as http from "http";
+import http from "http";
 import os from "os";
 import path from "path";
-import * as tls from "tls";
+import tls from "tls";
 
 export interface Config {
   storageDir: string;
@@ -10,6 +10,7 @@ export interface Config {
   workers: number;
   httpPort: number;
   httpsPort: number;
+  idSize: number;
   ui: boolean;
   uiDir: string;
   limits?: {
@@ -25,31 +26,23 @@ export interface Config {
 }
 
 let config: Config = {
-  storageDir: os.tmpdir(),
-  maxStorage: 100000000,
+  storageDir: path.join(os.tmpdir()),
+  maxStorage: 10000000,
   workers: os.cpus().length,
   ui: true,
-  uiDir: path.join(__dirname, "..", "ui"),
+  uiDir: path.join(__dirname, "..", "dist"),
   httpPort: 8080,
-  httpsPort: 8443
+  httpsPort: 8443,
+  idSize: 10
 };
 
 export default function loadConfig() {
-  let configFile: string;
+  const localConfig = path.join(process.cwd(), "config.json");
 
-  switch (os.type()) {
-    case "Windows_NT":
-      configFile = path.join(process.cwd(), "config.json");
-      break;
-    case "Linux":
-    case "Darwin":
-    default:
-      configFile = path.join(path.sep + "etc", "lruserve", "config.json");
+  if (fs.existsSync(localConfig)) {
+    const data: Config = JSON.parse(fs.readFileSync(localConfig, { encoding: "utf8" }));
+    config = { ...config, ...data };
   }
-
-  const data: any = JSON.parse(fs.readFileSync(configFile, { encoding: "utf8" }));
-
-  config = { ...config, ...data };
 
   return config;
 }

@@ -13,16 +13,47 @@ export function routes(config: Config) {
   const upload = multer({ storage, limits: config.limits });
   const RPC = new RPCClient();
 
-  router.use("/stats", async (req: any, res, next) => {
+  if (config.ui) {
+    router.use("/", express.static(config.uiDir, {
+      dotfiles: "ignore",
+      etag: true,
+      fallthrough: true,
+      immutable: false,
+      index: ["index.html"],
+      lastModified: true,
+      maxAge: 3600000,
+      redirect: true
+    }));
+  }
+
+  router.get("/stats", async (req, res) => {
     const stats = await RPC.lru_stats();
 
     res.json(stats);
   });
 
-  router.use("/files", upload.single("file"), async (req: any, res, next) => {
-    if (!["PUT", "POST"].includes(req.method)) next();
+  router.get("/:id", async (req, res) => {
+    const id = req.params.id;
 
-    const filename = nanoid() + path.extname(req.file.originalname);
+    const found = await RPC.lru_touch(id);
+
+    if (!found) {
+      res.status(404).end();
+      return;
+    }
+
+    const info = await RPC.lru_info(id);
+
+    res.download(path.join(config.storageDir, info.filename), info.originalname);
+  });
+
+  router.put("/", upload.single("file"), async (req, res) => {
+    if (req.file.size > config.maxStorage) {
+      res.status(400).end();
+      return;
+    }
+
+    const filename = nanoid(config.idSize);
 
     const info = {
       filename,
@@ -44,39 +75,6 @@ export function routes(config: Config) {
 
     res.status(201).json(info);
   });
-
-  router.use("/files", async (req, res, next) => {
-    const id = req.url.slice(1);
-
-    const found = await RPC.lru_touch(id);
-
-    if (!found) {
-      res.status(404).end();
-    }
-
-    next();
-  });
-
-  router.use("/files", express.static(config.storageDir, {
-    dotfiles: "ignore",
-    etag: true,
-    fallthrough: true,
-    immutable: true,
-    index: false,
-    lastModified: true,
-    redirect: false
-  }));
-
-  router.use("/", express.static(config.uiDir, {
-    dotfiles: "ignore",
-    etag: true,
-    fallthrough: false,
-    immutable: false,
-    index: ["index.html"],
-    lastModified: true,
-    maxAge: 3600000,
-    redirect: true
-  }));
 
   return router;
 }
