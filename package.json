@@ -1,5 +1,5 @@
 {
-  "name": "lru-static-server",
+  "name": "lru-file-server",
   "version": "0.2.3-1",
   "description": "",
   "main": "./src/index.js",
