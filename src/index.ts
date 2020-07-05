@@ -12,6 +12,8 @@ import { RPCServer } from "./rpc";
 const debug = Debug("lruserve");
 const config = loadConfig();
 
+Debug.enable("lruserve");
+
 if (cluster.isMaster) {
   debug(`Master (${process.pid}) is running`);
 
