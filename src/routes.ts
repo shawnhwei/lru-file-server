@@ -34,24 +34,24 @@ export function routes(config: Config) {
 
     if (config.grants) {
       router.use(grant(config.grants));
+
+      router.get("/oauth/callback", (req, res) => {
+        if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
+          res.redirect("/");
+        } else {
+          res.status(401).end();
+        }
+      });
+
+      router.use((req, res, next) => {
+        if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
+          next();
+        } else {
+          res.redirect(`/connect/${config.provider}`);
+        }
+      });
     }
   }
-
-  router.get("/oauth/callback", (req, res) => {
-    if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
-      res.redirect("/");
-    } else {
-      res.status(401).end();
-    }
-  });
-
-  router.use((req, res, next) => {
-    if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
-      next();
-    } else {
-      res.redirect(`/connect/${config.provider}`);
-    }
-  });
 
   if (config.ui) {
     router.use("/", express.static(config.uiDir, {
