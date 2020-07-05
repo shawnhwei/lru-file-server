@@ -1,0 +1,26 @@
+html(class="h-full no-js" lang="")
+  head
+    meta(charset="utf-8")
+    title
+      | File upload
+    meta(name="description" content="")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="style.scss")
+
+  body(class="flex w-100 h-full p-4 transition-all duration-500 ease-in-out")
+    div(id="upload" class="flex-1 flex justify-center items-center relative py-6 px-4 cursor-pointer")
+      input(id="file" name="file" type="file")
+      label(for="file" class="text-4xl font-mono pointer-events-none select-none")
+        | Drop a file or click to browse
+      div(class="absolute top-0 left-0 w-20 h-20 border-t-8 border-l-8 border-gray-500")
+      div(class="absolute top-0 right-0 w-20 h-20 border-t-8 border-r-8 border-gray-500")
+      div(class="absolute bottom-0 left-0 w-20 h-20 border-b-8 border-l-8 border-gray-500")
+      div(class="absolute bottom-0 right-0 w-20 h-20 border-b-8 border-r-8 border-gray-500")
+    div(id="progress" class="hidden flex-1 flex justify-center items-center relative pointer-events-none select-none")
+      div(id="progress-text" class="mx-4 relative z-10 text-6xl font-mono text-black")= 0.00
+      div(id="progress-bar" class="absolute top-0 bottom-0 left-0 z-0 bg-blue-600 transition-all duration-500 ease-linear" style="width: 0%")
+    div(id="share" class="hidden flex-1 flex flex-col justify-center items-center")
+      div(id="share-text" class="text-4xl font-mono text-black cursor-pointer")
+      div(id="share-hint" class="invisible text-xl font-mono italic text-black")
+        | Copied!
+    script(type="text/javascript" src="main.ts")

@@ -1,8 +1,10 @@
 import fs from "fs";
 import http from "http";
+import nanoid from "nanoid";
 import os from "os";
 import path from "path";
 import tls from "tls";
+import IORedis from "ioredis";
 
 export interface Config {
   storageDir: string;
@@ -10,6 +12,12 @@ export interface Config {
   workers: number;
   httpPort: number;
   httpsPort: number;
+  sessions?: {
+    secret: string;
+  };
+  provider?: string;
+  grants?: any;
+  redis: IORedis.RedisOptions;
   idSize: number;
   ui: boolean;
   uiDir: string;
@@ -26,14 +34,15 @@ export interface Config {
 }
 
 let config: Config = {
-  storageDir: path.join(os.tmpdir()),
-  maxStorage: 10000000,
-  workers: os.cpus().length,
-  ui: true,
-  uiDir: path.join(__dirname, "..", "dist"),
   httpPort: 8080,
   httpsPort: 8443,
-  idSize: 10
+  redis: {},
+  idSize: 10,
+  maxStorage: 10000000,
+  storageDir: path.join(os.tmpdir()),
+  ui: true,
+  uiDir: path.join(__dirname, "..", "dist"),
+  workers: os.cpus().length
 };
 
 export default function loadConfig() {

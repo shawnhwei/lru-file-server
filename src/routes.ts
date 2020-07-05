@@ -1,17 +1,57 @@
 import express from "express";
+import session from "express-session";
+import Debug from "debug";
 import fs from "fs";
-import multer from "multer";
+import Grant from "grant";
+import Busboy from "busboy";
 import nanoid from "nanoid";
 import path from "path";
 import { Config } from "./config";
 import { RPCClient } from "./rpc";
+import { Readable } from "stream";
+import IORedis from "ioredis";
+import ConnectRedis from "connect-redis";
+import { isNull } from "util";
 
 const router = express.Router();
-const storage = multer.memoryStorage();
+const grant = Grant.express();
+const RedisStore = ConnectRedis(session);
+const RPC = new RPCClient();
+
+function has(object, key) {
+  return object ? Object.prototype.hasOwnProperty.call(object, key) : false;
+}
 
 export function routes(config: Config) {
-  const upload = multer({ storage, limits: config.limits });
-  const RPC = new RPCClient();
+  if (config.sessions) {
+    const client = new IORedis(config.redis);
+    const store = new RedisStore({ client });
+
+    router.use(session({
+      store,
+      ...config.sessions
+    }));
+
+    if (config.grants) {
+      router.use(grant(config.grants));
+    }
+  }
+
+  router.get("/oauth/callback", (req, res) => {
+    if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
+      res.redirect("/");
+    } else {
+      res.status(401).end();
+    }
+  });
+
+  router.use((req, res, next) => {
+    if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
+      next();
+    } else {
+      res.redirect(`/connect/${config.provider}`);
+    }
+  });
 
   if (config.ui) {
     router.use("/", express.static(config.uiDir, {
@@ -47,33 +87,61 @@ export function routes(config: Config) {
     res.download(path.join(config.storageDir, info.filename), info.originalname);
   });
 
-  router.put("/", upload.single("file"), async (req, res) => {
-    if (req.file.size > config.maxStorage) {
-      res.status(400).end();
-      return;
-    }
-
-    const filename = nanoid(config.idSize);
-
-    const info = {
-      filename,
-      originalname: req.file.originalname,
-      encoding: req.file.encoding,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
-      id: filename
-    };
-
-    await RPC.lru_add(filename, info);
-
-    await new Promise((resolve, reject) => {
-      fs.writeFile(path.join(config.storageDir, filename), req.file.buffer, (err) => {
-        if (err) reject(err);
-        resolve();
+  router.put("/", (req, res) => {
+    try {
+      const busboy = new Busboy({
+        headers: req.headers,
+        limits: {
+          files: 1,
+          fileSize: config.limits?.fileSize ? config.limits.fileSize : config.maxStorage
+        }
       });
-    });
 
-    res.status(201).json(info);
+      let info: any = {};
+
+      busboy.on("file", (fieldname, readStream: Readable, origName, encoding, mimetype) => {
+        const filename = nanoid(config.idSize);
+        const filepath = path.join(config.storageDir, filename);
+        const writeStream = fs.createWriteStream(filepath);
+        let size = 0;
+
+        info = {
+          filename,
+          originalname: origName,
+          encoding: encoding,
+          mimetype: mimetype,
+          size: size,
+          id: filename
+        };
+
+        readStream.pipe(writeStream);
+
+        readStream.on("data", (chunk) => {
+          size += chunk.length;
+        });
+
+        readStream.on("limit", () => {
+          res.status(400).end();
+        });
+
+        readStream.on("error", () => {
+          res.status(400).end();
+        });
+
+        writeStream.on("error", () => {
+          res.status(400).end();
+        });
+
+        writeStream.on("finish", async () => {
+          await RPC.lru_add(info.filename, info);
+          res.status(201).json(info);
+        })
+      });
+
+      req.pipe(busboy);
+    } catch (err) {
+      res.status(400).end();
+    }
   });
 
   return router;

@@ -32,6 +32,8 @@ if (cluster.isMaster) {
 
   const app = express();
 
+  app.set("views", "./web")
+  app.set("view engine", "pug")
   app.use(routes(config));
 
   if (!config.tls) http.createServer(app).listen(config.httpPort, () => {

@@ -2,10 +2,10 @@
   "name": "lru-file-server",
   "version": "0.3.0",
   "description": "",
-  "main": "./src/index.js",
+  "main": "./bin/index.js",
   "scripts": {
-    "dev": "concurrently \"parcel watch web/index.html\" \"ts-node-dev --project src/tsconfig.json --respawn src/index.ts\"",
-    "build": "parcel build web/index.html && tsc --build src/tsconfig.json",
+    "dev": "concurrently \"parcel watch web/*.pug web/*.scss\" \"ts-node-dev --project src/tsconfig.json --respawn src/index.ts\"",
+    "build": "parcel build web/*.pug web/*.scss && tsc --build src/tsconfig.json",
     "check": "tsc --project web/tsconfig.json --noEmit && tsc --project src/tsconfig.json --noEmit",
     "start": "node bin/index.js"
   },
@@ -17,17 +17,17 @@
   "repository": "github:shawnhwei/lru-file-server",
   "license": "MIT",
   "devDependencies": {
+    "@types/busboy": "^0.2.3",
     "@types/debug": "^4.1.5",
     "@types/express": "^4.17.6",
-    "@types/multer": "^1.4.3",
+    "@types/express-session": "^1.17.0",
+    "@types/ioredis": "^4.17.0",
     "@types/nanoid": "^2.1.0",
-    "@types/node": "^13.13.12",
-    "@types/uuid": "^3.4.9",
+    "@types/node": "^12.12.47",
     "autoprefixer": "^9.8.4",
     "concurrently": "^5.2.0",
     "eslint": "^7.4.0",
     "parcel-bundler": "^1.12.4",
-    "postcss-import": "^12.0.1",
     "sass": "^1.26.9",
     "tailwindcss": "^1.4.6",
     "ts-node": "^8.10.2",
@@ -36,9 +36,16 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.1",
+    "brand-colors": "^2.1.1",
+    "busboy": "^0.3.1",
+    "connect-redis": "^4.0.4",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "multer": "^1.4.2",
-    "nanoid": "^2.1.11"
+    "express-session": "^1.17.1",
+    "grant": "^5.2.0",
+    "ioredis": "^4.17.3",
+    "nanoid": "^2.1.11",
+    "pug": "^3.0.0"
   }
 }

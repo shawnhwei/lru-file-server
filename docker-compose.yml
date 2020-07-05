@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  lruserve:
+    build: ./
+    ports:
+      - 8080:8080
+      - 8443:8443
+  redis:
+    image: redis
+    expose:
+      - 6379
