@@ -11,10 +11,9 @@ import { RPCClient } from "./rpc";
 import { Readable } from "stream";
 import IORedis from "ioredis";
 import ConnectRedis from "connect-redis";
-import { isNull } from "util";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 const router = express.Router();
-const grant = Grant.express();
 const RedisStore = ConnectRedis(session);
 const RPC = new RPCClient();
 
@@ -27,13 +26,30 @@ export function routes(config: Config) {
     const client = new IORedis(config.redis);
     const store = new RedisStore({ client });
 
+    router.use((req, res, next) => {
+      res.set("Cache-Control", "no-store");
+      next();
+    });
+
     router.use(session({
       store,
       ...config.sessions
     }));
 
     if (config.grants) {
-      router.use(grant(config.grants));
+      if (process.env.https_proxy || process.env.http_proxy) {
+        const proxy = process.env.https_proxy as string || process.env.http_proxy as string;
+        const agent = new HttpsProxyAgent(proxy);
+
+        const grant = Grant.express({
+          config: config.grants,
+          request: { agent }
+        });
+
+        router.use(grant);
+      } else {
+        router.use(Grant.express({ config: config.grants }));
+      }
 
       router.get("/oauth/callback", (req, res) => {
         if (req.session && req.session.grant && req.session.grant.response && req.session.grant.response.access_token) {
